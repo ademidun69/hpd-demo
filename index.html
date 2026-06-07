@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Honeypot Detector (HPD) — Agent Integration Demo</title>
+  <meta name="description" content="A live demonstration of the Honeypot Detector (HPD) skill, showing how an AI agent invokes it to analyze smart contracts on Pharos." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3l11 4v8c0 7-4.5 12-11 14C9.5 27 5 22 5 15V7l11-4z"/>
+            <path d="M11 16l3.5 3.5L21 13"/>
+          </svg>
+        </div>
+        <div class="brand__text">
+          <div class="brand__name">Honeypot Detector</div>
+          <div class="brand__tag">HPD · v1.0.0</div>
+        </div>
+      </div>
+      <nav class="topbar__nav">
+        <a href="#overview">Overview</a>
+        <a href="#agent-demo">Agent Demo</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#integration">Integration</a>
+        <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener" class="topbar__github">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="overview">
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <div class="hero__eyebrow">Smart Contract Security Skill</div>
+          <h1 class="hero__title">Detect honeypots, rug pulls, and malicious contracts before your agent interacts with them.</h1>
+          <p class="hero__sub">Honeypot Detector (HPD) is a SKILL.md-compatible package that gives any AI agent the ability to evaluate the risk of an EVM smart contract. It returns a normalized <strong>0–100 risk score</strong> and a clear verdict, with a fully traceable list of findings.</p>
+          <div class="hero__meta">
+            <div class="meta-item">
+              <div class="meta-item__label">Network</div>
+              <div class="meta-item__value">Pharos Mainnet (default) · Atlantic Testnet</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-item__label">Framework</div>
+              <div class="meta-item__value">Node.js ≥ 18 · ethers v6 · Anvil (Foundry)</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-item__label">Compatible Agents</div>
+              <div class="meta-item__value">OpenClaw · Claude Code · Codex</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-item__label">License</div>
+              <div class="meta-item__value">MIT</div>
+            </div>
+          </div>
+        </div>
+        <aside class="hero__panel" aria-label="Sample agent output">
+          <div class="panel__header">
+            <div class="panel__dots"><span></span><span></span><span></span></div>
+            <div class="panel__title">Agent ↔ HPD</div>
+          </div>
+          <div class="panel__body" id="sample-output">
+            <pre><code id="sample-code">Loading sample output…</code></pre>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- AGENT DEMO -->
+    <section class="section" id="agent-demo">
+      <div class="section__head">
+        <div class="section__kicker">Live agent integration</div>
+        <h2 class="section__title">See an AI agent invoke HPD in real time</h2>
+        <p class="section__sub">The interactive panel below shows exactly what happens when an agent receives a user request, loads the HPD SKILL.md, and calls the appropriate function. Type any EVM address (or pick a sample) and click <strong>Run analysis</strong>.</p>
+      </div>
+
+      <div class="demo">
+        <div class="demo__terminal" aria-label="Simulated agent terminal">
+          <div class="terminal__header">
+            <div class="terminal__dots"><span></span><span></span><span></span></div>
+            <div class="terminal__title">agent-shell — claude-code</div>
+            <div class="terminal__status" id="terminal-status">idle</div>
+          </div>
+          <div class="terminal__body" id="terminal-body">
+            <div class="term-line"><span class="term-prompt">user ›</span> <span id="user-prompt">Analyze the contract at <code id="user-address-display">0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2</code> and tell me if it is safe to interact with.</span></div>
+            <div class="term-line" id="agent-think">agent › <span class="term-dim">reading SKILL.md… identifying function <code>analyzeContract</code>…</span></div>
+          </div>
+        </div>
+
+        <div class="demo__controls">
+          <label class="field">
+            <span class="field__label">Contract address</span>
+            <div class="field__row">
+              <input type="text" id="address-input" value="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" spellcheck="false" autocomplete="off" />
+              <button id="run-btn" class="btn btn--primary">Run analysis</button>
+            </div>
+            <span class="field__hint">This is a read-only demonstration. No transactions are signed or broadcast.</span>
+          </label>
+
+          <div class="field">
+            <span class="field__label">Try a sample</span>
+            <div class="sample-chips" id="sample-chips">
+              <button class="chip" data-addr="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" data-label="WETH (canonical)">WETH</button>
+              <button class="chip" data-addr="0xdAC17F958D2ee523a2206206994597C13D831ec7" data-label="USDT (canonical)">USDT</button>
+              <button class="chip" data-addr="0x000000000000000000000000000000000000dEaD" data-label="Selfdestruct pattern">Selfdestruct</button>
+              <button class="chip" data-addr="0x1111111111111111111111111111111111111111" data-label="Blacklist setter">Blacklist</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo__report" id="report-card" hidden>
+          <div class="report__head">
+            <div>
+              <div class="report__eyebrow">HPD Analysis Report</div>
+              <div class="report__addr" id="report-addr">—</div>
+              <div class="report__net" id="report-net">Pharos Mainnet</div>
+            </div>
+            <div class="report__score" id="report-score">--</div>
+          </div>
+          <div class="report__verdict" id="report-verdict">—</div>
+          <div class="report__rec" id="report-rec">—</div>
+          <div class="report__findings">
+            <div class="findings__title">Findings</div>
+            <ul class="findings__list" id="findings-list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPABILITIES -->
+    <section class="section section--alt" id="capabilities">
+      <div class="section__head">
+        <div class="section__kicker">What it analyzes</div>
+        <h2 class="section__title">Three layers of analysis, one clean verdict</h2>
+      </div>
+      <div class="grid grid--3">
+        <article class="card">
+          <div class="card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h3 class="card__title">Static analysis</h3>
+          <p class="card__body">Scans deployed bytecode for 30+ known-dangerous function selectors: hidden mint, blacklist, pause, owner withdraw, fee manipulation, proxy upgrade, selfdestruct.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          </div>
+          <h3 class="card__title">Behavioral simulation</h3>
+          <p class="card__body">Forks the target chain locally, deploys a copy, and runs a buy + sell round-trip to detect runtime traps that static analysis can miss.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </div>
+          <h3 class="card__title">Reputation &amp; context</h3>
+          <p class="card__body">Inspects contract age, deployer, holder concentration, and liquidity lock status to surface contextual risk that pure code analysis cannot see.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- INTEGRATION -->
+    <section class="section" id="integration">
+      <div class="section__head">
+        <div class="section__kicker">How an agent uses it</div>
+        <h2 class="section__title">Drop-in for any SKILL.md-compatible agent</h2>
+        <p class="section__sub">HPD is installed as a normal agent skill. The agent reads <code>SKILL.md</code>, identifies the right function, and calls it via the local CLI or library entry point.</p>
+      </div>
+      <div class="grid grid--2">
+        <div class="codeblock">
+          <div class="codeblock__title">Install</div>
+<pre><code>git clone https://github.com/ademidun69/HPD.git
+cd HPD
+npm install
+export PHAROS_MAINNET_RPC="https://your-pharos-rpc"</code></pre>
+        </div>
+        <div class="codeblock">
+          <div class="codeblock__title">Agent prompt (natural language)</div>
+<pre><code>"Analyze the contract at 0xC02a...6Cc2
+on Pharos mainnet and tell me if
+it is safe to swap into."</code></pre>
+        </div>
+        <div class="codeblock">
+          <div class="codeblock__title">Programmatic call</div>
+<pre><code>const hpd = require("./src/index");
+
+const report = await hpd.analyzeContract(
+  "0xC02a...6Cc2",
+  { network: "pharos-mainnet" }
+);
+
+console.log(report.riskScore, report.verdict);
+console.log(report.findings);</code></pre>
+        </div>
+        <div class="codeblock">
+          <div class="codeblock__title">Direct CLI</div>
+<pre><code># Full analysis
+node src/cli.js analyze 0xC02a...6Cc2
+
+# Static-only (no fork)
+node src/cli.js quick 0xC02a...6Cc2
+
+# On the testnet
+node src/cli.js analyze 0xC02a...6Cc2 \
+  --network=pharos-testnet</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SAFETY -->
+    <section class="section section--alt">
+      <div class="section__head">
+        <div class="section__kicker">Safety &amp; scope</div>
+        <h2 class="section__title">Read-only by design</h2>
+        <p class="section__sub">HPD performs analysis only. It does not request wallet signatures, does not broadcast transactions, and does not connect to user wallets. All simulations run inside an ephemeral local Anvil fork.</p>
+      </div>
+      <div class="grid grid--4">
+        <div class="stat">
+          <div class="stat__num">0</div>
+          <div class="stat__label">Transactions signed</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">0</div>
+          <div class="stat__label">Allowances requested</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">30+</div>
+          <div class="stat__label">Dangerous selectors scanned</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num">11</div>
+          <div class="stat__label">Offline tests passing</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <div>
+          <div class="footer__brand">Honeypot Detector (HPD)</div>
+          <div class="footer__sub">A professional smart contract security analysis skill · MIT licensed</div>
+        </div>
+        <div class="footer__links">
+          <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener">GitHub repository</a>
+          <a href="https://github.com/ademidun69/HPD/blob/main/README.md" target="_blank" rel="noopener">Documentation</a>
+          <a href="https://github.com/ademidun69/HPD/blob/main/SKILL.md" target="_blank" rel="noopener">SKILL.md</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="demo.js"></script>
+</body>
+</html>
