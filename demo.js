@@ -2,26 +2,36 @@
  * Honeypot Detector (HPD) — interactive demo logic.
  *
  * This is a client-side simulation that mirrors what the actual HPD library
- * would return for a given address. It uses deterministic heuristics based
- * on well-known function selectors and address patterns, so the demo is
- * reproducible and works fully offline.
+ * (https://github.com/ademidun69/HPD) would return for a given address.
+ * The scoring math is a direct port of the Node `src/scorer.js` module, and
+ * the dangerous-selector list matches `src/static-analysis.js` 1:1.
+ *
+ * The demo is fully offline, makes zero outbound network requests, and does
+ * not interact with any wallet. It is honest about what it is: a deterministic
+ * simulation of the library's output for illustrative purposes.
+ *
+ * The real library does onchain analysis (static selector scan + Anvil fork
+ * simulation + reputation lookup). The demo cannot do that in a browser, so
+ * it uses curated profiles for the sample addresses and a low-risk default
+ * for unknown ones.
  */
 
 (function () {
   "use strict";
 
-  // -------- Simulated HPD library (mirrors src/scorer.js) --------
+  // -------- Sample profiles (deterministic, matches repo behavior) --------
 
+  // Pharos mainnet LINK token (chain 1672). Demo treats it as a known-good
+  // canonical contract → SAFE / 0 / 100, no findings.
   const KNOWN_GOOD_TOKENS = new Set([
-    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".toLowerCase(), // WETH
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7".toLowerCase(), // USDT (treated as low risk for demo)
+    "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29".toLowerCase(), // LINK on Pharos
+    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".toLowerCase(), // WETH (canonical)
+    "0xdAC17F958D2ee523a2206206994597C13D831ec7".toLowerCase(), // USDT (canonical)
   ]);
 
-  // Heuristic risk profiles keyed by address pattern.
-  // These are demo-only — the real HPD does onchain bytecode analysis.
   const PATTERN_PROFILES = {
     selfdestruct: {
-      match: (a) => a.toLowerCase() === "0x000000000000000000000000000000000000dEaD".toLowerCase(),
+      match: (a) => a.toLowerCase() === "0x000000000000000000000000000000000000dEaD",
       findings: [
         { type: "SELFDESTRUCT", severity: "critical", detail: "Address contains selfdestruct opcode (0x43d726d6) in deployable bytecode." },
         { type: "HIDDEN_MINT", severity: "high", detail: "Owner-only mint function (0x40c10f19) detected." },
@@ -37,11 +47,13 @@
         { type: "MAX_WALLET", severity: "medium", detail: "setMaxWallet() can be changed after deployment." },
       ],
     },
-    weth: {
+    knownGood: {
       match: (a) => KNOWN_GOOD_TOKENS.has(a.toLowerCase()),
       findings: [],
     },
   };
+
+  // -------- Scorer (mirrors src/scorer.js in the HPD library) --------
 
   const SEVERITY_WEIGHTS = { critical: 80, high: 35, medium: 15, low: 3 };
 
@@ -84,13 +96,13 @@
       findings.push({
         type: "GENERIC_RISK",
         severity: "low",
-        detail: "No dangerous selectors in sampled bytecode. Address not in trusted registry.",
+        detail: "No dangerous selectors in sampled bytecode. Address not in trusted registry. Run --no-sim for a fast static check, or set PHAROS_MAINNET_RPC for the full analysis.",
       });
     }
     const { score, verdict } = scoreFindings(findings);
     return {
       address,
-      network: "Pharos Mainnet",
+      network: "Pharos Mainnet (chain 1672)",
       riskScore: score,
       verdict,
       recommendation: RECOMMENDATIONS[verdict],
@@ -120,9 +132,10 @@
   }
 
   function renderSample() {
+    // Default sample: LINK on Pharos (a known-good, real Pharos mainnet contract).
     const sample = {
-      address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      network: "Pharos Mainnet",
+      address: "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29",
+      network: "Pharos Mainnet (chain 1672)",
       riskScore: 0,
       verdict: "SAFE",
       recommendation: RECOMMENDATIONS.SAFE,
@@ -192,7 +205,7 @@
 
     userAddressDisplay.textContent = address;
 
-    appendLine(`<span class="term-prompt">user ›</span> Analyze the contract at <code>${shortAddr(address)}</code> on Pharos mainnet and tell me if it is safe to interact with.`);
+    appendLine(`<span class="term-prompt">user ›</span> Analyze the contract at <code>${shortAddr(address)}</code> on Pharos mainnet (chain 1672) and tell me if it is safe to interact with.`);
     await sleep(450);
     appendLine(`<span class="term-prompt">agent ›</span> <span class="term-dim">loading skill honeypot-detector@1.0.0…</span>`);
     await sleep(400);
@@ -210,7 +223,7 @@
     const report = analyzeAddress(address);
     const verdictClass = report.verdict === "SAFE" ? "term-ok" :
                          report.verdict === "CAUTION" ? "term-tag" :
-                         report.verdict === "HIGH RISK" ? "term-bad" : "term-bad";
+                         "term-bad";
     appendLine(`<span class="term-prompt">agent ›</span> Verdict: <span class="${verdictClass}">${report.verdict}</span> · Score: <span class="${verdictClass}">${report.riskScore}/100</span>`);
     appendLine(`<span class="term-prompt">agent ›</span> ${report.recommendation}`);
     if (report.findings.length > 0) {
@@ -238,11 +251,11 @@
 
   // Hero sample JSON (formatted, colorized)
   const heroSample = {
-    address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-    network: "Pharos Mainnet",
-    riskScore: 3,
+    address: "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29",
+    network: "Pharos Mainnet (chain 1672)",
+    riskScore: 0,
     verdict: "SAFE",
-    recommendation: "No major red flags detected. Standard caution still advised.",
+    recommendation: RECOMMENDATIONS.SAFE,
     findings: []
   };
   const heroCode = $("sample-code");
@@ -267,6 +280,6 @@
         });
   }
 
-  // Render initial sample in the demo card
+  // Render initial sample in the demo card so the page never shows "—".
   renderSample();
 })();

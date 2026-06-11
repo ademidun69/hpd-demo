@@ -53,7 +53,7 @@
           <div class="hero__meta">
             <div class="meta-item">
               <div class="meta-item__label">Network</div>
-              <div class="meta-item__value">Pharos Mainnet (default) · Atlantic Testnet</div>
+              <div class="meta-item__value">Pharos Mainnet (chain 1672) · Atlantic Testnet (688689)</div>
             </div>
             <div class="meta-item">
               <div class="meta-item__label">Framework</div>
@@ -97,7 +97,7 @@
             <div class="terminal__status" id="terminal-status">idle</div>
           </div>
           <div class="terminal__body" id="terminal-body">
-            <div class="term-line"><span class="term-prompt">user ›</span> <span id="user-prompt">Analyze the contract at <code id="user-address-display">0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2</code> and tell me if it is safe to interact with.</span></div>
+            <div class="term-line"><span class="term-prompt">user ›</span> <span id="user-prompt">Analyze the contract at <code id="user-address-display">0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29</code> and tell me if it is safe to interact with.</span></div>
             <div class="term-line" id="agent-think">agent › <span class="term-dim">reading SKILL.md… identifying function <code>analyzeContract</code>…</span></div>
           </div>
         </div>
@@ -106,7 +106,7 @@
           <label class="field">
             <span class="field__label">Contract address</span>
             <div class="field__row">
-              <input type="text" id="address-input" value="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" spellcheck="false" autocomplete="off" />
+              <input type="text" id="address-input" value="0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29" spellcheck="false" autocomplete="off" />
               <button id="run-btn" class="btn btn--primary">Run analysis</button>
             </div>
             <span class="field__hint">This is a read-only demonstration. No transactions are signed or broadcast.</span>
@@ -115,11 +115,13 @@
           <div class="field">
             <span class="field__label">Try a sample</span>
             <div class="sample-chips" id="sample-chips">
+              <button class="chip" data-addr="0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29" data-label="LINK on Pharos">LINK (Pharos)</button>
               <button class="chip" data-addr="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" data-label="WETH (canonical)">WETH</button>
               <button class="chip" data-addr="0xdAC17F958D2ee523a2206206994597C13D831ec7" data-label="USDT (canonical)">USDT</button>
               <button class="chip" data-addr="0x000000000000000000000000000000000000dEaD" data-label="Selfdestruct pattern">Selfdestruct</button>
               <button class="chip" data-addr="0x1111111111111111111111111111111111111111" data-label="Blacklist setter">Blacklist</button>
             </div>
+            <span class="field__hint">Sample addresses are deterministic patterns that map to a representative risk profile. They are not real token contracts being scanned.</span>
           </div>
         </div>
 
@@ -127,17 +129,18 @@
           <div class="report__head">
             <div>
               <div class="report__eyebrow">HPD Analysis Report</div>
-              <div class="report__addr" id="report-addr">—</div>
+              <div class="report__addr" id="report-addr"></div>
               <div class="report__net" id="report-net">Pharos Mainnet</div>
             </div>
-            <div class="report__score" id="report-score">--</div>
+            <div class="report__score" id="report-score"></div>
           </div>
-          <div class="report__verdict" id="report-verdict">—</div>
-          <div class="report__rec" id="report-rec">—</div>
+          <div class="report__verdict" id="report-verdict"></div>
+          <div class="report__rec" id="report-rec"></div>
           <div class="report__findings">
             <div class="findings__title">Findings</div>
             <ul class="findings__list" id="findings-list"></ul>
           </div>
+          <div class="report__source">Source: deterministic demo simulation · mirrored from <code>src/scorer.js</code> in the HPD library</div>
         </div>
       </div>
     </section>
@@ -161,7 +164,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
           </div>
           <h3 class="card__title">Behavioral simulation</h3>
-          <p class="card__body">Forks the target chain locally, deploys a copy, and runs a buy + sell round-trip to detect runtime traps that static analysis can miss.</p>
+          <p class="card__body">Forks Pharos locally via Anvil, deploys a copy of the contract, and runs a buy + sell round-trip to detect runtime traps that static analysis can miss.</p>
         </article>
         <article class="card">
           <div class="card__icon">
@@ -190,16 +193,16 @@ export PHAROS_MAINNET_RPC="https://your-pharos-rpc"</code></pre>
         </div>
         <div class="codeblock">
           <div class="codeblock__title">Agent prompt (natural language)</div>
-<pre><code>"Analyze the contract at 0xC02a...6Cc2
-on Pharos mainnet and tell me if
-it is safe to swap into."</code></pre>
+<pre><code>"Analyze the contract at 0x51e2A2...BE29
+on Pharos mainnet (chain 1672) and
+tell me if it is safe to swap into."</code></pre>
         </div>
         <div class="codeblock">
           <div class="codeblock__title">Programmatic call</div>
 <pre><code>const hpd = require("./src/index");
 
 const report = await hpd.analyzeContract(
-  "0xC02a...6Cc2",
+  "0x51e2A2...BE29",
   { network: "pharos-mainnet" }
 );
 
@@ -209,13 +212,13 @@ console.log(report.findings);</code></pre>
         <div class="codeblock">
           <div class="codeblock__title">Direct CLI</div>
 <pre><code># Full analysis
-node src/cli.js analyze 0xC02a...6Cc2
+node src/cli.js analyze 0x51e2A2...BE29
 
 # Static-only (no fork)
-node src/cli.js quick 0xC02a...6Cc2
+node src/cli.js quick 0x51e2A2...BE29
 
 # On the testnet
-node src/cli.js analyze 0xC02a...6Cc2 \
+node src/cli.js analyze 0x51e2A2...BE29 \
   --network=pharos-testnet</code></pre>
         </div>
       </div>
@@ -252,7 +255,7 @@ node src/cli.js analyze 0xC02a...6Cc2 \
       <div class="footer__inner">
         <div>
           <div class="footer__brand">Honeypot Detector (HPD)</div>
-          <div class="footer__sub">A professional smart contract security analysis skill · MIT licensed</div>
+          <div class="footer__sub">A professional smart contract security analysis skill · MIT licensed · Pharos Agent Center</div>
         </div>
         <div class="footer__links">
           <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener">GitHub repository</a>
