@@ -25,7 +25,18 @@
       "smart-contract-screening",
     ],
     networks: ["Pharos Mainnet (chain 1672)", "Pharos Atlantic Testnet (chain 688689)"],
-    pricing: { model: "Free", perCall: 0, currency: "PROS", note: "Free during the campaign; x402-compatible when payment module ships." },
+    pricing: {
+      model: "free-during-campaign / x402-billable-when-published",
+      perCall: 0,
+      currency: "PROS",
+      settlement: "x402",
+      note:
+        "Free for the duration of the Pharos AI Agent Carnival campaign. " +
+        "When the Anvita Flow payment module ships, POST /analyze and " +
+        "POST /quick-check will return 402 Payment Required with x402 " +
+        "payment instructions; Steward Agents retry with the X-PAYMENT " +
+        "proof header. The HTTP wrapper is already shaped for this.",
+    },
     endpoints: [
       { method: "GET", path: "/health" },
       { method: "GET", path: "/agent-card" },
