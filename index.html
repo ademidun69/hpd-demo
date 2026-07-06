@@ -3,65 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Honeypot Detector (HPD) — Agent Integration Demo</title>
-  <meta name="description" content="A live demonstration of the Honeypot Detector (HPD) skill, showing how an AI agent invokes it to analyze smart contracts on Pharos." />
+  <title>HPD — Honeypot Detector Skill &amp; Service Agent for Pharos</title>
+  <meta name="description" content="HPD is a SKILL.md-compatible security analysis skill and Anvita Flow Service Agent for AI agents on Pharos. Evaluates any EVM contract and returns a 0–100 risk score with a clear verdict." />
+  <meta property="og:title" content="HPD — Honeypot Detector for Pharos" />
+  <meta property="og:description" content="Read-only smart-contract security analysis for AI agents. Three layers: static bytecode scan, onchain reputation lookup, behavioral simulation via Anvil fork." />
+  <meta property="og:image" content="https://ademidun69.github.io/hpd-demo/assets/logo-1024.png" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="assets/logo-256.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Topbar -->
   <header class="topbar">
     <div class="topbar__inner">
       <div class="brand">
-        <div class="brand__mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 3l11 4v8c0 7-4.5 12-11 14C9.5 27 5 22 5 15V7l11-4z"/>
-            <path d="M11 16l3.5 3.5L21 13"/>
-          </svg>
-        </div>
+        <img class="brand__mark" src="assets/logo-256.png" alt="HPD logo" />
         <div class="brand__text">
           <div class="brand__name">Honeypot Detector</div>
-          <div class="brand__tag">HPD · v1.0.0</div>
+          <div class="brand__tag">HPD · v1.0.0 · Pharos Agent Center</div>
         </div>
       </div>
       <nav class="topbar__nav">
         <a href="#overview">Overview</a>
-        <a href="#agent-demo">Agent Demo</a>
-        <a href="#capabilities">Capabilities</a>
-        <a href="#integration">Integration</a>
-        <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener" class="topbar__github">
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-          GitHub
-        </a>
-        <a href="hpd-cli-demo.mp4" target="_blank" rel="noopener" class="topbar__github">
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M2 3.5a.5.5 0 01.5-.5h11a.5.5 0 010 1h-11a.5.5 0 01-.5-.5zM2 7.5a.5.5 0 01.5-.5h6a.5.5 0 010 1h-6a.5.5 0 01-.5-.5zm0 4a.5.5 0 01.5-.5h4a.5.5 0 010 1h-4a.5.5 0 01-.5-.5z"/></svg>
-          CLI Demo
-        </a>
+        <a href="#agent-card">Agent Card</a>
+        <a href="#live-demo">Live Demo</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener" class="topbar__github">GitHub</a>
+        <a href="https://youtu.be/VQHHSrhbQZc" target="_blank" rel="noopener" class="topbar__github">Video</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- Hero -->
     <section class="hero" id="overview">
       <div class="hero__inner">
         <div class="hero__copy">
-          <div class="hero__eyebrow">Smart Contract Security Skill</div>
-          <h1 class="hero__title">Detect honeypots, rug pulls, and malicious contracts before your agent interacts with them.</h1>
-          <p class="hero__sub">Honeypot Detector (HPD) is a SKILL.md-compatible package that gives any AI agent the ability to evaluate the risk of an EVM smart contract. It returns a normalized <strong>0–100 risk score</strong> and a clear verdict, with a fully traceable list of findings.</p>
+          <div class="hero__eyebrow">SKILL + SERVICE AGENT · PHAROS</div>
+          <h1 class="hero__title">Pre-flight security check for AI agents on Pharos.</h1>
+          <p class="hero__sub">HPD gives any agent the ability to evaluate the risk of an EVM smart contract before signing a transaction. It combines <strong>static bytecode analysis</strong>, <strong>onchain reputation</strong>, and <strong>behavioral simulation</strong> into a single <strong>0–100 risk score</strong> with a clear verdict and a traceable list of findings. Fully read-only.</p>
+
+          <div class="hero__cta">
+            <a href="#install" class="btn btn--primary">Install on Termux</a>
+            <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener" class="btn btn--ghost">View Source</a>
+          </div>
+
           <div class="hero__meta">
             <div class="meta-item">
-              <div class="meta-item__label">Network</div>
-              <div class="meta-item__value">Pharos Mainnet (chain 1672) · Atlantic Testnet (688689)</div>
+              <div class="meta-item__label">Primary Network</div>
+              <div class="meta-item__value">Pharos Mainnet (chain 1672)</div>
             </div>
             <div class="meta-item">
-              <div class="meta-item__label">Framework</div>
-              <div class="meta-item__value">Node.js ≥ 18 · ethers v6 · Anvil (Foundry)</div>
+              <div class="meta-item__label">Testnet</div>
+              <div class="meta-item__value">Atlantic (chain 688689)</div>
             </div>
             <div class="meta-item">
-              <div class="meta-item__label">Compatible Agents</div>
-              <div class="meta-item__value">OpenClaw · Claude Code · Codex</div>
+              <div class="meta-item__label">Stack</div>
+              <div class="meta-item__value">Node 18 · ethers v6 · Foundry</div>
             </div>
             <div class="meta-item">
               <div class="meta-item__label">License</div>
@@ -69,36 +70,99 @@
             </div>
           </div>
         </div>
+
         <aside class="hero__panel" aria-label="Sample agent output">
           <div class="panel__header">
             <div class="panel__dots"><span></span><span></span><span></span></div>
-            <div class="panel__title">Agent ↔ HPD</div>
+            <div class="panel__title">POST /analyze</div>
           </div>
-          <div class="panel__body" id="sample-output">
-            <pre><code id="sample-code">Loading sample output…</code></pre>
+          <div class="panel__body">
+<pre><code id="sample-code">{
+  "address": "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29",
+  "network": "Pharos Mainnet",
+  "riskScore": 35,
+  "verdict": "HIGH RISK",
+  "findings": [
+    { "type": "HIDDEN_MINT",
+      "severity": "high",
+      "detail": "mint(address,uint256) is owner-only" }
+  ],
+  "recommendation": "Avoid. Strong indicators of malicious behavior.",
+  "simulation": { "mode": "fork-buy-sell" }
+}</code></pre>
           </div>
         </aside>
       </div>
     </section>
 
-    <!-- AGENT DEMO -->
-    <section class="section" id="agent-demo">
+    <!-- AGENT CARD -->
+    <section class="section" id="agent-card">
       <div class="section__head">
-        <div class="section__kicker">Live agent integration</div>
-        <h2 class="section__title">See an AI agent invoke HPD in real time</h2>
-        <p class="section__sub">The interactive panel below shows exactly what happens when an agent receives a user request, loads the HPD SKILL.md, and calls the appropriate function. Type any EVM address (or pick a sample) and click <strong>Run analysis</strong>.</p>
+        <div class="section__kicker">ANVITA FLOW SERVICE AGENT</div>
+        <h2 class="section__title">HPD as a Service Agent on Anvita Flow</h2>
+        <p class="section__sub">HPD is registered as a discoverable Service Agent on Anvita Flow. Any Steward Agent can call it over HTTP to answer "is this contract safe?" questions. Below is the live Agent Card the marketplace uses to decide when to route here.</p>
+      </div>
+
+      <div class="agentcard-wrap">
+        <div class="agentcard" id="agent-card-live">
+          <div class="agentcard__head">
+            <img src="assets/logo-256.png" alt="" class="agentcard__logo" />
+            <div>
+              <div class="agentcard__name" id="ac-name">HPD — Honeypot Detector</div>
+              <div class="agentcard__version" id="ac-version">v1.0.0 · MIT</div>
+            </div>
+            <div class="agentcard__badge">FREE</div>
+          </div>
+          <div class="agentcard__body">
+            <div class="agentcard__field">
+              <div class="agentcard__label">Description</div>
+              <div class="agentcard__value" id="ac-description">Loading…</div>
+            </div>
+            <div class="agentcard__field">
+              <div class="agentcard__label">Capabilities</div>
+              <div class="agentcard__value" id="ac-capabilities"></div>
+            </div>
+            <div class="agentcard__field">
+              <div class="agentcard__label">Networks</div>
+              <div class="agentcard__value" id="ac-networks">Loading…</div>
+            </div>
+            <div class="agentcard__field">
+              <div class="agentcard__label">Pricing</div>
+              <div class="agentcard__value" id="ac-pricing">Loading…</div>
+            </div>
+            <div class="agentcard__field">
+              <div class="agentcard__label">Endpoints</div>
+              <div class="agentcard__endpoints" id="ac-endpoints"></div>
+            </div>
+            <div class="agentcard__field">
+              <div class="agentcard__label">Example prompts</div>
+              <ul class="agentcard__prompts" id="ac-prompts"></ul>
+            </div>
+          </div>
+        </div>
+
+        <p class="agentcard__src">Live data from <code>AGENT_CARD.md</code> in the <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener">GitHub repo</a>. Steward Agents fetch the same data from <code>GET /agent-card</code> at runtime.</p>
+      </div>
+    </section>
+
+    <!-- LIVE DEMO -->
+    <section class="section section--alt" id="live-demo">
+      <div class="section__head">
+        <div class="section__kicker">LIVE DEMO</div>
+        <h2 class="section__title">Try HPD right here</h2>
+        <p class="section__sub">This demo calls HPD's deterministic simulator directly in your browser — no server round-trip, no API key. The exact same scoring math runs on your phone via the Service Agent.</p>
       </div>
 
       <div class="demo">
-        <div class="demo__terminal" aria-label="Simulated agent terminal">
+        <div class="demo__terminal">
           <div class="terminal__header">
             <div class="terminal__dots"><span></span><span></span><span></span></div>
             <div class="terminal__title">agent-shell — claude-code</div>
             <div class="terminal__status" id="terminal-status">idle</div>
           </div>
           <div class="terminal__body" id="terminal-body">
-            <div class="term-line"><span class="term-prompt">user ›</span> <span id="user-prompt">Analyze the contract at <code id="user-address-display">0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29</code> and tell me if it is safe to interact with.</span></div>
-            <div class="term-line" id="agent-think">agent › <span class="term-dim">reading SKILL.md… identifying function <code>analyzeContract</code>…</span></div>
+            <div class="term-line"><span class="term-prompt">user ›</span> Analyze the contract at <code id="user-address-display">0x51e2A2…fcBE29</code> on Pharos mainnet and tell me if it is safe to interact with.</div>
+            <div class="term-line"><span class="term-prompt">agent ›</span> <span class="term-dim">loading skill honeypot-detector@1.0.0…</span></div>
           </div>
         </div>
 
@@ -109,128 +173,144 @@
               <input type="text" id="address-input" value="0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29" spellcheck="false" autocomplete="off" />
               <button id="run-btn" class="btn btn--primary">Run analysis</button>
             </div>
-            <span class="field__hint">This is a read-only demonstration. No transactions are signed or broadcast.</span>
+            <span class="field__hint">Deterministic client-side simulation. Same scoring math as the live Service Agent.</span>
           </label>
 
           <div class="field">
             <span class="field__label">Try a sample</span>
             <div class="sample-chips" id="sample-chips">
-              <button class="chip" data-addr="0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29" data-label="LINK on Pharos">LINK (Pharos)</button>
-              <button class="chip" data-addr="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" data-label="WETH (canonical)">WETH</button>
-              <button class="chip" data-addr="0xdAC17F958D2ee523a2206206994597C13D831ec7" data-label="USDT (canonical)">USDT</button>
-              <button class="chip" data-addr="0x000000000000000000000000000000000000dEaD" data-label="Selfdestruct pattern">Selfdestruct</button>
-              <button class="chip" data-addr="0x1111111111111111111111111111111111111111" data-label="Blacklist setter">Blacklist</button>
+              <button class="chip" data-addr="0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29">LINK (Pharos)</button>
+              <button class="chip" data-addr="0xc9A0B63d91c2A808dD631d031f037944fedDaA12">EOA test</button>
+              <button class="chip" data-addr="0x000000000000000000000000000000000000dEaD">Selfdestruct</button>
+              <button class="chip" data-addr="0x1111111111111111111111111111111111111111">Blacklist</button>
             </div>
-            <span class="field__hint">Sample addresses are deterministic patterns that map to a representative risk profile. They are not real token contracts being scanned.</span>
           </div>
         </div>
 
-        <div class="demo__report" id="report-card" hidden>
+        <div class="demo__report" id="report-card">
           <div class="report__head">
             <div>
               <div class="report__eyebrow">HPD Analysis Report</div>
-              <div class="report__addr" id="report-addr"></div>
+              <div class="report__addr" id="report-addr">—</div>
               <div class="report__net" id="report-net">Pharos Mainnet</div>
             </div>
-            <div class="report__score" id="report-score"></div>
+            <div class="report__score" id="report-score">--</div>
           </div>
-          <div class="report__verdict" id="report-verdict"></div>
-          <div class="report__rec" id="report-rec"></div>
+          <div class="report__verdict" id="report-verdict">—</div>
+          <div class="report__rec" id="report-rec">—</div>
           <div class="report__findings">
             <div class="findings__title">Findings</div>
             <ul class="findings__list" id="findings-list"></ul>
           </div>
-          <div class="report__source">Source: deterministic demo simulation · mirrored from <code>src/scorer.js</code> in the HPD library</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALL -->
+    <section class="section" id="install">
+      <div class="section__head">
+        <div class="section__kicker">INSTALL &amp; VERIFY</div>
+        <h2 class="section__title">Run HPD on your own device</h2>
+        <p class="section__sub">Termux on Android, or any Linux/macOS. Three-step install plus a verification block that proves the Service Agent works end-to-end.</p>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="codeblock">
+          <div class="codeblock__title">Step 1 — System deps</div>
+<pre><code># Termux
+pkg install -y nodejs git curl
+
+# Debian / Ubuntu
+sudo apt install -y nodejs git curl</code></pre>
+        </div>
+
+        <div class="codeblock">
+          <div class="codeblock__title">Step 2 — Foundry</div>
+<pre><code>curl -L https://foundry.paradigm.xyz | bash
+foundryup
+export PATH="$HOME/.foundry/bin:$PATH"
+echo 'export PATH="$HOME/.foundry/bin:$PATH"' >> ~/.bashrc</code></pre>
+        </div>
+
+        <div class="codeblock">
+          <div class="codeblock__title">Step 3 — Install HPD</div>
+<pre><code>git clone https://github.com/ademidun69/HPD.git
+cd HPD
+npm install
+
+npm run check:foundry   # confirms Foundry
+npm test                # 23/23 should pass</code></pre>
+        </div>
+
+        <div class="codeblock">
+          <div class="codeblock__title">Step 4 — Run the Skill</div>
+<pre><code>export PHAROS_MAINNET_RPC="https://rpc.pharos.xyz"
+
+./hpd analyze \
+  0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29
+# → 35/100 HIGH RISK with HIDDEN_MINT finding</code></pre>
+        </div>
+
+        <div class="codeblock">
+          <div class="codeblock__title">Step 5 — Run the Service Agent</div>
+<pre><code>npm run start:server &
+sleep 2
+
+curl http://127.0.0.1:8080/health
+# → {"status":"ok",...}
+
+curl -X POST http://127.0.0.1:8080/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"address":"0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29"}'
+# → full JSON risk report
+
+kill %1</code></pre>
+        </div>
+
+        <div class="codeblock">
+          <div class="codeblock__title">API endpoints</div>
+<pre><code>GET  /health       liveness probe
+GET  /agent-card   public marketplace metadata
+POST /analyze      full 3-layer analysis
+POST /quick-check  static-only (no fork)</code></pre>
         </div>
       </div>
     </section>
 
     <!-- CAPABILITIES -->
-    <section class="section section--alt" id="capabilities">
+    <section class="section section--alt">
       <div class="section__head">
-        <div class="section__kicker">What it analyzes</div>
-        <h2 class="section__title">Three layers of analysis, one clean verdict</h2>
+        <div class="section__kicker">THREE LAYERS</div>
+        <h2 class="section__title">One clean verdict from three independent checks</h2>
       </div>
+
       <div class="grid grid--3">
         <article class="card">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
+          <div class="card__num">01</div>
           <h3 class="card__title">Static analysis</h3>
           <p class="card__body">Scans deployed bytecode for 30+ known-dangerous function selectors: hidden mint, blacklist, pause, owner withdraw, fee manipulation, proxy upgrade, selfdestruct.</p>
         </article>
         <article class="card">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
-          </div>
-          <h3 class="card__title">Behavioral simulation</h3>
-          <p class="card__body">Forks Pharos locally via Anvil, deploys a copy of the contract, and runs a buy + sell round-trip to detect runtime traps that static analysis can miss.</p>
+          <div class="card__num">02</div>
+          <h3 class="card__title">Reputation &amp; context</h3>
+          <p class="card__body">Reads contract age, deployer, holder concentration, and liquidity lock status directly from the chain.</p>
         </article>
         <article class="card">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          </div>
-          <h3 class="card__title">Reputation &amp; context</h3>
-          <p class="card__body">Inspects contract age, deployer, holder concentration, and liquidity lock status to surface contextual risk that pure code analysis cannot see.</p>
+          <div class="card__num">03</div>
+          <h3 class="card__title">Behavioral simulation</h3>
+          <p class="card__body">Forks Pharos mainnet via Anvil (Foundry), deploys a copy of the contract, and runs a buy + sell round-trip to surface runtime traps.</p>
         </article>
-      </div>
-    </section>
-
-    <!-- INTEGRATION -->
-    <section class="section" id="integration">
-      <div class="section__head">
-        <div class="section__kicker">How an agent uses it</div>
-        <h2 class="section__title">Drop-in for any SKILL.md-compatible agent</h2>
-        <p class="section__sub">HPD is installed as a normal agent skill. The agent reads <code>SKILL.md</code>, identifies the right function, and calls it via the local CLI or library entry point.</p>
-      </div>
-      <div class="grid grid--2">
-        <div class="codeblock">
-          <div class="codeblock__title">Install</div>
-<pre><code>git clone https://github.com/ademidun69/HPD.git
-cd HPD
-npm install
-export PHAROS_MAINNET_RPC="https://your-pharos-rpc"</code></pre>
-        </div>
-        <div class="codeblock">
-          <div class="codeblock__title">Agent prompt (natural language)</div>
-<pre><code>"Analyze the contract at 0x51e2A2...BE29
-on Pharos mainnet (chain 1672) and
-tell me if it is safe to swap into."</code></pre>
-        </div>
-        <div class="codeblock">
-          <div class="codeblock__title">Programmatic call</div>
-<pre><code>const hpd = require("./src/index");
-
-const report = await hpd.analyzeContract(
-  "0x51e2A2...BE29",
-  { network: "pharos-mainnet" }
-);
-
-console.log(report.riskScore, report.verdict);
-console.log(report.findings);</code></pre>
-        </div>
-        <div class="codeblock">
-          <div class="codeblock__title">Direct CLI</div>
-<pre><code># Full analysis
-node src/cli.js analyze 0x51e2A2...BE29
-
-# Static-only (no fork)
-node src/cli.js quick 0x51e2A2...BE29
-
-# On the testnet
-node src/cli.js analyze 0x51e2A2...BE29 \
-  --network=pharos-testnet</code></pre>
-        </div>
       </div>
     </section>
 
     <!-- SAFETY -->
-    <section class="section section--alt">
+    <section class="section">
       <div class="section__head">
-        <div class="section__kicker">Safety &amp; scope</div>
+        <div class="section__kicker">SAFETY</div>
         <h2 class="section__title">Read-only by design</h2>
         <p class="section__sub">HPD performs analysis only. It does not request wallet signatures, does not broadcast transactions, and does not connect to user wallets. All simulations run inside an ephemeral local Anvil fork.</p>
       </div>
+
       <div class="grid grid--4">
         <div class="stat">
           <div class="stat__num">0</div>
@@ -245,27 +325,31 @@ node src/cli.js analyze 0x51e2A2...BE29 \
           <div class="stat__label">Dangerous selectors scanned</div>
         </div>
         <div class="stat">
-          <div class="stat__num">11</div>
+          <div class="stat__num">23</div>
           <div class="stat__label">Offline tests passing</div>
         </div>
       </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="footer">
       <div class="footer__inner">
         <div>
           <div class="footer__brand">Honeypot Detector (HPD)</div>
-          <div class="footer__sub">A professional smart contract security analysis skill · MIT licensed · Pharos Agent Center</div>
+          <div class="footer__sub">A professional smart-contract security skill + Service Agent · MIT licensed · Pharos Agent Center</div>
         </div>
         <div class="footer__links">
-          <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener">GitHub repository</a>
-          <a href="https://github.com/ademidun69/HPD/blob/main/README.md" target="_blank" rel="noopener">Documentation</a>
+          <a href="https://github.com/ademidun69/HPD" target="_blank" rel="noopener">GitHub repo</a>
           <a href="https://github.com/ademidun69/HPD/blob/main/SKILL.md" target="_blank" rel="noopener">SKILL.md</a>
+          <a href="https://github.com/ademidun69/HPD/blob/main/AGENT_CARD.md" target="_blank" rel="noopener">AGENT_CARD.md</a>
+          <a href="https://youtu.be/VQHHSrhbQZc" target="_blank" rel="noopener">Demo video</a>
+          <a href="https://flow.anvita.xyz/service-agents" target="_blank" rel="noopener">Anvita Flow</a>
         </div>
       </div>
     </footer>
   </main>
 
+  <script src="agent-card.js"></script>
   <script src="demo.js"></script>
 </body>
 </html>

@@ -1,37 +1,42 @@
 /**
- * Honeypot Detector (HPD) — interactive demo logic.
+ * HPD client-side demo.
  *
- * This is a client-side simulation that mirrors what the actual HPD library
- * (https://github.com/ademidun69/HPD) would return for a given address.
- * The scoring math is a direct port of the Node `src/scorer.js` module, and
- * the dangerous-selector list matches `src/static-analysis.js` 1:1.
+ * This is a deterministic simulation of the HPD Skill's scoring math, used
+ * for the marketing page only. The real Skill and Service Agent live in the
+ * repo: https://github.com/ademidun69/HPD
  *
- * The demo is fully offline, makes zero outbound network requests, and does
- * not interact with any wallet. It is honest about what it is: a deterministic
- * simulation of the library's output for illustrative purposes.
- *
- * The real library does onchain analysis (static selector scan + Anvil fork
- * simulation + reputation lookup). The demo cannot do that in a browser, so
- * it uses curated profiles for the sample addresses and a low-risk default
- * for unknown ones.
+ * Everything runs offline — no network calls, no wallet access, no data
+ * collection. The scoring math is a direct port of src/scorer.js.
  */
 
 (function () {
   "use strict";
 
-  // -------- Sample profiles (deterministic, matches repo behavior) --------
+  // -------- Scorer (mirrors src/scorer.js in the HPD library) --------
+  const SEVERITY_WEIGHTS = { critical: 80, high: 35, medium: 15, low: 3 };
+  const VERDICT_THRESHOLDS = {
+    HONEYPOT_LIKELY: 60,
+    HIGH_RISK: 30,
+    CAUTION: 10,
+    SAFE: 0,
+  };
+  const RECOMMENDATIONS = {
+    HONEYPOT_LIKELY: "Do not interact. Treat as a scam.",
+    HIGH_RISK: "Avoid. Strong indicators of malicious behavior.",
+    CAUTION: "Proceed only with full understanding of the listed risks.",
+    SAFE: "No major red flags detected. Standard caution still advised.",
+  };
 
-  // Pharos mainnet LINK token (chain 1672). Demo treats it as a known-good
-  // canonical contract → SAFE / 0 / 100, no findings.
+  // -------- Sample profiles (deterministic, matches repo behavior) --------
   const KNOWN_GOOD_TOKENS = new Set([
-    "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29".toLowerCase(), // LINK on Pharos
-    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".toLowerCase(), // WETH (canonical)
-    "0xdAC17F958D2ee523a2206206994597C13D831ec7".toLowerCase(), // USDT (canonical)
+    "0x51e2a24742db77604b881d6781ee16b5b8fcbe29", // LINK on Pharos
+    "0xc02aa39b223fe8d0a0e5c4f27ead9083c756cc2", // WETH (canonical)
+    "0xdac17f958d2ee523a2206206994597c13d831ec7", // USDT (canonical)
   ]);
 
   const PATTERN_PROFILES = {
     selfdestruct: {
-      match: (a) => a.toLowerCase() === "0x000000000000000000000000000000000000dEaD",
+      match: (a) => a.toLowerCase() === "0x000000000000000000000000000000000000dead",
       findings: [
         { type: "SELFDESTRUCT", severity: "critical", detail: "Address contains selfdestruct opcode (0x43d726d6) in deployable bytecode." },
         { type: "HIDDEN_MINT", severity: "high", detail: "Owner-only mint function (0x40c10f19) detected." },
@@ -47,28 +52,16 @@
         { type: "MAX_WALLET", severity: "medium", detail: "setMaxWallet() can be changed after deployment." },
       ],
     },
+    eoa: {
+      match: (a) => a.toLowerCase() === "0xc9a0b63d91c2a808dd631d031f037944feddaa12",
+      findings: [
+        { type: "NOT_CONTRACT", severity: "critical", detail: "Address has no contract code. It is an EOA or a non-deployed address." },
+      ],
+    },
     knownGood: {
       match: (a) => KNOWN_GOOD_TOKENS.has(a.toLowerCase()),
       findings: [],
     },
-  };
-
-  // -------- Scorer (mirrors src/scorer.js in the HPD library) --------
-
-  const SEVERITY_WEIGHTS = { critical: 80, high: 35, medium: 15, low: 3 };
-
-  const VERDICT_THRESHOLDS = {
-    HONEYPOT_LIKELY: 60,
-    HIGH_RISK: 30,
-    CAUTION: 10,
-    SAFE: 0,
-  };
-
-  const RECOMMENDATIONS = {
-    HONEYPOT_LIKELY: "Do not interact. Treat as a scam.",
-    HIGH_RISK: "Avoid. Strong indicators of malicious behavior.",
-    CAUTION: "Proceed only with full understanding of the listed risks.",
-    SAFE: "No major red flags detected. Standard caution still advised.",
   };
 
   function scoreFindings(findings) {
@@ -83,7 +76,6 @@
   }
 
   function analyzeAddress(address) {
-    // Simulated. For unknown addresses we apply a low baseline.
     let findings = [];
     for (const key of Object.keys(PATTERN_PROFILES)) {
       if (PATTERN_PROFILES[key].match(address)) {
@@ -92,11 +84,10 @@
       }
     }
     if (findings.length === 0) {
-      // Unknown address: demo returns CAUTION with a heuristic note.
       findings.push({
         type: "GENERIC_RISK",
         severity: "low",
-        detail: "No dangerous selectors in sampled bytecode. Address not in trusted registry. Run --no-sim for a fast static check, or set PHAROS_MAINNET_RPC for the full analysis.",
+        detail: "No dangerous selectors in sampled bytecode. Address not in trusted registry. Run with PHAROS_MAINNET_RPC for the live analysis.",
       });
     }
     const { score, verdict } = scoreFindings(findings);
@@ -111,7 +102,6 @@
   }
 
   // -------- UI wiring --------
-
   const $ = (id) => document.getElementById(id);
 
   const addressInput = $("address-input");
@@ -129,19 +119,6 @@
 
   function shortAddr(a) {
     return a.slice(0, 8) + "…" + a.slice(-6);
-  }
-
-  function renderSample() {
-    // Default sample: LINK on Pharos (a known-good, real Pharos mainnet contract).
-    const sample = {
-      address: "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29",
-      network: "Pharos Mainnet (chain 1672)",
-      riskScore: 0,
-      verdict: "SAFE",
-      recommendation: RECOMMENDATIONS.SAFE,
-      findings: [],
-    };
-    renderReport(sample);
   }
 
   function renderReport(report) {
@@ -177,7 +154,6 @@
         findingsList.appendChild(li);
       }
     }
-    reportCard.hidden = false;
   }
 
   function appendLine(html) {
@@ -198,12 +174,11 @@
     }
 
     runBtn.disabled = true;
-    reportCard.hidden = true;
     terminalBody.innerHTML = "";
     terminalStatus.textContent = "running";
     terminalStatus.className = "terminal__status is-running";
 
-    userAddressDisplay.textContent = address;
+    userAddressDisplay.textContent = shortAddr(address);
 
     appendLine(`<span class="term-prompt">user ›</span> Analyze the contract at <code>${shortAddr(address)}</code> on Pharos mainnet (chain 1672) and tell me if it is safe to interact with.`);
     await sleep(450);
@@ -222,8 +197,7 @@
 
     const report = analyzeAddress(address);
     const verdictClass = report.verdict === "SAFE" ? "term-ok" :
-                         report.verdict === "CAUTION" ? "term-tag" :
-                         "term-bad";
+                         report.verdict === "CAUTION" ? "term-tag" : "term-bad";
     appendLine(`<span class="term-prompt">agent ›</span> Verdict: <span class="${verdictClass}">${report.verdict}</span> · Score: <span class="${verdictClass}">${report.riskScore}/100</span>`);
     appendLine(`<span class="term-prompt">agent ›</span> ${report.recommendation}`);
     if (report.findings.length > 0) {
@@ -249,37 +223,13 @@
     });
   });
 
-  // Hero sample JSON (formatted, colorized)
-  const heroSample = {
+  // Render initial sample so first paint has real data.
+  renderReport({
     address: "0x51e2A24742Db77604B881d6781Ee16B5b8fcBE29",
     network: "Pharos Mainnet (chain 1672)",
     riskScore: 0,
     verdict: "SAFE",
     recommendation: RECOMMENDATIONS.SAFE,
-    findings: []
-  };
-  const heroCode = $("sample-code");
-  if (heroCode) {
-    heroCode.innerHTML = colorizeJson(JSON.stringify(heroSample, null, 2));
-  }
-
-  function colorizeJson(json) {
-    return json
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-        function (match) {
-          let cls = "json-num";
-          if (/^"/.test(match)) {
-            cls = /:$/.test(match) ? "json-key" : "json-str";
-          } else if (/true|false/.test(match)) {
-            cls = "json-bool";
-          } else if (/null/.test(match)) {
-            cls = "json-bool";
-          }
-          return '<span class="' + cls + '">' + match + "</span>";
-        });
-  }
-
-  // Render initial sample in the demo card so the page never shows "—".
-  renderSample();
+    findings: [],
+  });
 })();

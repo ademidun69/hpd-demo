@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Honeypot Detector (HPD)">
+  <title>Honeypot Detector</title>
+  <defs>
+    <!-- Background gradient: deep navy → Pharos blue -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#1a3a8a"/>
+    </linearGradient>
+    <!-- Shield body gradient: Pharos accent blue -->
+    <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4f8cff"/>
+      <stop offset="100%" stop-color="#2e5fcc"/>
+    </linearGradient>
+    <!-- Crosshair highlight: cyan -->
+    <linearGradient id="crossGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ee2ff"/>
+      <stop offset="100%" stop-color="#4f8cff"/>
+    </linearGradient>
+    <!-- Subtle inner glow -->
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#4f8cff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="8" y="8" width="240" height="240" rx="48" ry="48" fill="url(#bgGrad)"/>
+
+  <!-- Inner glow -->
+  <circle cx="128" cy="128" r="100" fill="url(#glow)"/>
+
+  <!-- Shield body -->
+  <path
+    d="M128 36
+       L208 60
+       L208 130
+       C208 178 174 212 128 224
+       C82 212 48 178 48 130
+       L48 60
+       Z"
+    fill="url(#shieldGrad)"
+    stroke="#7ee2ff"
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Inner shield bevel -->
+  <path
+    d="M128 52
+       L192 70
+       L192 130
+       C192 168 165 196 128 206
+       C91 196 64 168 64 130
+       L64 70
+       Z"
+    fill="none"
+    stroke="#0b1220"
+    stroke-width="1"
+    stroke-opacity="0.25"
+  />
+
+  <!-- Crosshair: outer ring -->
+  <circle cx="128" cy="130" r="40" fill="none" stroke="url(#crossGrad)" stroke-width="6"/>
+  <!-- Crosshair: inner ring -->
+  <circle cx="128" cy="130" r="14" fill="#0b1220" stroke="#7ee2ff" stroke-width="3"/>
+  <!-- Crosshair: center dot -->
+  <circle cx="128" cy="130" r="3" fill="#7ee2ff"/>
+
+  <!-- Crosshair: cross lines (top, right, bottom, left) -->
+  <g stroke="url(#crossGrad)" stroke-width="6" stroke-linecap="round">
+    <line x1="128" y1="74"  x2="128" y2="84"/>
+    <line x1="128" y1="176" x2="128" y2="186"/>
+    <line x1="72"  y1="130" x2="82"  y2="130"/>
+    <line x1="174" y1="130" x2="184" y2="130"/>
+  </g>
+
+  <!-- Small blockchain-cube hint at the bottom (3 stacked diamonds) -->
+  <g fill="#7ee2ff" opacity="0.85">
+    <polygon points="128,196 134,200 128,204 122,200"/>
+    <polygon points="114,202 120,206 114,210 108,206" opacity="0.6"/>
+    <polygon points="142,202 148,206 142,210 136,206" opacity="0.6"/>
+  </g>
+</svg>
